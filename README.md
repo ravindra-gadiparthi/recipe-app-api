@@ -1,1 +1,1 @@
-# recipe-app-api
+# recipe-app-api## Commands to build docker images`###Using docker compose ```bashdocker-compose build```## Create Django Project```bashdocker-compose run app sh -c "django-admin.py startproject app ."```
