@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User,Tag
+from .models import User, Tag
 
 
 class CustomUserAdmin(UserAdmin):
