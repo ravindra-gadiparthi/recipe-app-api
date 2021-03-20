@@ -8,11 +8,10 @@ COPY ./requirements.txt /requirements.txt
 
 COPY ./repositories repositories
 #adding postgresql client
-RUN apk add --update --no-cache postgresql-client --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
-
+COPY ./requirements.txt /requirements.txt
+RUN apk add --update --no-cache postgresql-client
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
-      gcc libc-dev linux-headers postgresql-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
-
+      gcc libc-dev linux-headers postgresql-dev
 RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
 
