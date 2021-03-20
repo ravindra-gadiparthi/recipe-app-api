@@ -1,11 +1,20 @@
 FROM python:3.8-alpine
-MAINTAINER London App Developer Ltd.
+MAINTAINER Ravindra GAdiparthi
 
 ENV PYTHONUNBUFFERED 1
 
-# Install dependencies
+#copy requirements file
 COPY ./requirements.txt /requirements.txt
+
+COPY ./repositories repositories
+#adding postgresql client
+RUN apk add --update --no-cache postgresql-client --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
+
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+      gcc libc-dev linux-headers postgresql-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
+
 RUN pip install -r /requirements.txt
+RUN apk del .tmp-build-deps
 
 # Setup directory structure
 RUN mkdir /app
