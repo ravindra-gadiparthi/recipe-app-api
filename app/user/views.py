@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from rest_framework.generics import CreateAPIView
-from .serializers import UserSerializer, AuthTokenSerializer
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.settings import api_settings
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.settings import api_settings
+
+from .serializers import UserSerializer, AuthTokenSerializer
 
 
 class UserCreateView(CreateAPIView):
@@ -32,3 +33,4 @@ class UserTokenView(ObtainAuthToken):
     name = "token"
     serializer_class = AuthTokenSerializer
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
