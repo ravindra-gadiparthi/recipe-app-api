@@ -3,9 +3,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.generics import ListAPIView
 
 from .serializers import TagSerializer, IngredientSerializer, \
-    RecipeSerializer, RecipeDetailSerializer, RecipeImageSerializer
+    RecipeSerializer, RecipeDetailSerializer, RecipeImageSerializer, \
+    RecipeHistorySerializer
 
 from core.models import Tag, Ingredient, Recipe
 
@@ -20,7 +23,16 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         """Filter query set by authenticated user"""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+        queryset = self.queryset
+
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', '0'))
+        )
+        if assigned_only:
+            queryset = queryset.filter(recipe__isnull=False)
+        return queryset.filter(user=self.request.user) \
+            .order_by('-name') \
+            .distinct()
 
     def perform_create(self, serializer):
         """set authenticated user to user field"""
@@ -30,6 +42,23 @@ class BaseRecipeAttrViewSet(viewsets.GenericViewSet,
 class TagViewSet(BaseRecipeAttrViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+class RecipeHistoryView(viewsets.GenericViewSet,
+                        ListModelMixin):
+    serializer_class = RecipeHistorySerializer
+    queryset = Recipe.history.all()
+
+
+class RecipeHistoryDetailView(viewsets.GenericViewSet,
+                        RetrieveModelMixin):
+    serializer_class = RecipeHistorySerializer
+    queryset = Recipe.history.all()
+
+    def retrieve(self, request, pk=None):
+        records = self.get_queryset().filter(id=pk)
+        serializer = self.get_serializer(records, many=True)
+        return Response(serializer.data)
 
 
 class IngredientViewSet(BaseRecipeAttrViewSet):

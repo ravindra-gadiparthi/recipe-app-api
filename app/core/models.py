@@ -4,6 +4,8 @@ import os
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 
+from simple_history.models import HistoricalRecords
+
 from django.conf import settings
 
 
@@ -71,6 +73,7 @@ class Ingredient(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -86,6 +89,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
     image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.title
